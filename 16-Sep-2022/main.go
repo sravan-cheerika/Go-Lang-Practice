@@ -1,34 +1,53 @@
 package main
 
-import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-
-	"github.com/gorilla/mux"
+import ( 
+    "fmt"
+//    "os"
 )
 
-type person struct {
-	Name     string 
-	LastName string
-	Age      uint8
+type Queue struct{
+    Info [] string
 }
 
-func sendResponse(response http.ResponseWriter, request *http.Request) {
-	person := person{Name: "Sravan", LastName: "Reddy", Age: 25}
-	jsonResponse, jsonError := json.Marshal(person)
-
-	if jsonError != nil {
-		fmt.Println("Unable to encode JSON")
-	}
-	fmt.Println(string(jsonResponse))
-	response.Header().Set("Content-Type", "application/json")
-	response.WriteHeader(http.StatusOK)
-	response.Write(jsonResponse)
+func New() *Queue{
+    return ( &Queue{
+                    Info :[]string{},
+    })
 }
+
+func (q *Queue) Push(ele string)(*Queue) {
+    q.Info=append(q.Info, ele)
+    return q
+}
+
+func (q *Queue) Pop()(string,error) { // B,C 
+    ele:=q.Info[0] // ele -> B // taking backup of 1st element for Queue i.e, FIFO 
+    q.Info=q.Info[1:] // q.info = {C} -> starts from 1st element i.e, 0th element is popped out 
+    return ele , nil // 1st element 
+}
+
+/*func (q *Queue) StackPop()(string ,error){ 
+
+     ele:=q.Info[  len (q.Info)-1  ] // taking backup of last element for Stack i.e, LIFO
+     q.Info=q.Info[   :   len (q.Info)-1  ] 
+     return ele , nil
+
+}*/ 
 
 func main() {
-	route := mux.NewRouter()
-	route.HandleFunc("/person", sendResponse)
-	http.ListenAndServe(":8000", route)
+    head :=New()
+    head= head.Push("A")
+    head= head.Push("B")
+    head= head.Push("C")
+    //head= head.Push("D")
+
+    // Push -> A,B,C 
+    fmt.Println(head.Pop())
+    fmt.Println(head.Pop())
+    fmt.Println(head.Pop())
+    // Queue -> FIFO, Pop Logic -> "A" popped -> B,C
+
+    //fmt.Println(head.StackPop())
+    fmt.Println(*head)
+
 }
