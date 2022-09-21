@@ -35,7 +35,7 @@ func main() {
 	db.Model(&product).Update("Price", 300)
 	// Update - update multiple fields
 	db.Model(&product).Updates(Product3{Price: 50, Code: "sravan"}) // non-zero fields
-	db.Model(&product).Updates(map[string]interface{}{"Price": 150, "Code": "reddy"})
+	db.Model(&product).Updates(map[string]interface{}{"Price": 150, "Code": "reddy"}) // Interface{} is for multiple data types
 	// Delete - delete product
 	//db.Delete(&product, 1)
 }
