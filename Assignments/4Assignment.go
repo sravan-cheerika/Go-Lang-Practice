@@ -6,7 +6,7 @@ package main
 
 import (
 	"fmt"
-	"sync"
+//	"sync"
 	"time"
 )
 
@@ -22,10 +22,10 @@ import (
 // 	}
 // }
 
-var wg sync.WaitGroup
+/*var wg sync.WaitGroup
 
 func numeric(ch chan int) {
-	for i := 1; i <= 7; i++ {
+	for i := 1; i <= 4; i++ {
 		ch <- i
 		time.Sleep(1 * time.Millisecond)
 	}
@@ -33,31 +33,55 @@ func numeric(ch chan int) {
 }
 
 func alphabet(ch chan rune) {
-	for j := 'a'; j <= 'b'; j++ {
+	for j := 'a'; j <= 'c'; j++ {
 		ch <- j
 		time.Sleep(1 * time.Millisecond)
 	}
 	wg.Done()
-}
+}*/
 
 func main() {
-	wg.Add(2) // max num of functions to execute 
-	ch := make(chan int)
-	ch2 := make(chan rune)
+	//wg.Add(2) // max num of functions to execute 
 
-	go numeric(ch)
-	go alphabet(ch2)
+	ch,ch2 := make(chan rune), make(chan int)
 
-	for i := 0; i < 10; i++ {
-        select {
-        case msg1 := <-ch:
-            fmt.Println("received", msg1)
-        case msg2 := <-ch2:
-            fmt.Println("received", msg2)
+	go func() {
+
+        for j := 'A'; j <= 'Z'; j++ {
+            ch <- j
+			time.Sleep(1* time.Millisecond)
         }
-    }
+
+    }()
+
+	go func() {
+        for i := 1; i < 35; i++ {
+            ch2 <- i
+			time.Sleep(1* time.Millisecond)
+        }
+
+    }()
+
+	go func() {
+
+        for {
+            fmt.Print(string(<-ch))
+			fmt.Print(<-ch2)
+        }
+
+    }() 
+	time.Sleep(time.Second)
+	//anynoums function call
+	/*for i := 0; i < 6; i++ {
+		select {
+		case msg1 := <-ch:
+			fmt.Print("", string(msg1))
+		case msg2 := <-ch2:
+			fmt.Print("", msg2)
+		}
+	}*/
 	// for v := range ch {
 	// 	fmt.Println(v)
 	// }
-	wg.Wait()
+	//wg.Wait()
 }

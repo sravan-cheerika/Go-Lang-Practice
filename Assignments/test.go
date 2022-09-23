@@ -9,7 +9,7 @@ func main() {
 
     c, b := make(chan int), make(chan rune)
     go func() {
-        for i := 0; i < 6; i++ {
+        for i := 1; i < 35; i++ {
             c <- i
 			time.Sleep(1* time.Millisecond)
         }
@@ -18,20 +18,22 @@ func main() {
 
     go func() {
 
-        for j := 'a'; j <= 'e'; j++ {
+        for j := 'A'; j <= 'Z'; j++ {
             b <- j
 			time.Sleep(1* time.Millisecond)
         }
 
     }()
 
-	for i := 0; i < 10; i++ {
-        select {
-        case msg1 := <-c:
-            fmt.Println("received 1", string(msg1))
-        case msg2 := <-b:
-            fmt.Println("received 2", msg2)
+	go func() {
+
+        for {
+            fmt.Print(<-c)
+            fmt.Print(string(<-b))
         }
-    }
+
+    }() //anynoums function call
+
+    time.Sleep(time.Second)
  //anynoums function call
 }
