@@ -1,0 +1,62 @@
+package main
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+
+	"golang.org/x/net/websocket"
+)
+
+type socketDetail struct {
+	ipAddress string // make it slice conn type
+	//conn[] *websocket.Conn //
+	//conn[]
+
+	//clients map[*Client]bool
+
+}
+
+var conn []*websocket.Conn
+
+var clients = make(map[ClientConn]int)
+
+
+type ClientConn struct {
+    websocket *websocket.Conn
+    clientIP  string
+}
+
+//var port = "0.0.0.0:9001"
+
+func EchoServer(ws *websocket.Conn) {
+	io.Copy(ws, ws)
+
+	for _, ccc := range conn {
+        websocket.Message.Send(ccc, "Another connection")
+    }
+}
+
+func Handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "Hello 1234")
+}
+
+func main() {
+	fmt.Println("start connection : ")
+
+	for {
+
+		http.Handle("/", websocket.Handler(EchoServer))
+		//fmt.Println("IP address of client : ", conn.RemoteAddr().String())
+
+		err := http.ListenAndServe(":12345", nil)
+		if err != nil {
+			panic("ListenAndServe: " + err.Error())
+		}
+		// if err != nil {
+		// 	fmt.Println("Error ", err)
+		// 	continue
+		// }
+
+	}
+}
